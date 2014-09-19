@@ -1,0 +1,12 @@
+{
+  "name": "pstalk",
+  "private": true,
+  "dependencies": {
+    "purescript-control": "*",
+    "purescript-math": "*",
+    "purescript-maybe": "*",
+    "purescript-tuples": "*",
+    "purescript-monoid": "*",
+    "purescript-quickcheck": "*"
+  }
+}

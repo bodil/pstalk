@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>PureScript</title>
+    <meta name="author" content="Bodil">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <style type="text/css">
+      body { visibility: hidden; background: black; }
+    </style>
+  </head>
+  <body>
+
+    <div id="slides" class="haskell" data-background="m/princess-lambda.png">
+
+      <section class="title-slide">
+        <h1>PURESCRIPT</h1>
+        <h2 style="margin-top: 1em">or, what&nbsp;if&nbsp;Brendan had&nbsp;been&nbsp;SPJ?</h2>
+        <h3 style="margin-top: 1em"><a href="https://twitter.com/bodil">@bodil</a></h3>
+      </section>
+
+      <section class="photo" data-image="m/javascript.png"></section>
+
+      <section class="white align-bottom" data-image="m/eich.jpg">
+        <p>omg sry</p>
+      </section>
+
+      <section class="white" data-image="m/eich.jpg">
+        <ul>
+          <li class="fragment">it's a mess</li>
+          <li class="fragment">it's a mess</li>
+          <li class="fragment">it's a mess</li>
+          <li class="fragment">not enough homotopy type theory</li>
+        </ul>
+      </section>
+
+      <section class="photo" data-image="m/gnu.jpg"></section>
+
+      <section class="photo" data-image="m/norway.jpg"></section>
+
+      <section class="photo" data-image="m/shooped-norway.jpg"></section>
+
+      <section class="photo" data-image="m/real-norway.jpg"></section>
+
+      <section class="photo" data-image="m/bruce.jpg"></section>
+
+      <section class="photo white align-bottom" data-image="m/hello-joe.jpg">
+        <p>Hello Mike?</p>
+      </section>
+
+      <section class="photo" data-image="m/yes-this-is-dog.gif"></section>
+
+      <section class="photo" data-image="m/fal.jpg"></section>
+
+      <section>
+        <p>demo time</p>
+      </section>
+
+      <section>
+        <p>game engine:</p>
+        <ul>
+          <li class="fragment">functional</li>
+          <li class="fragment">reactive</li>
+          <li class="fragment">animation</li>
+        </ul>
+      </section>
+
+      <section class="photo white" data-image="m/mario.jpg">
+        <h2>ELM</h2>
+      </section>
+
+      <section class="photo" data-image="m/iveler.jpg"></section>
+
+      <section>
+        <p>constraints:</p>
+        <ul>
+          <li class="fragment">deliverable size</li>
+          <li class="fragment">unpredictable environment</li>
+        </ul>
+      </section>
+
+      <section class="photo white align-bottom" data-image="m/iveler.jpg">
+        <p>love me</p>
+      </section>
+
+      <section class="photo white" data-image="m/typescript.jpg">
+        <p class="fragment">the full stack:</p>
+        <ul>
+          <li class="fragment">typescript</li>
+          <li class="fragment">rxjs / baconjs</li>
+          <li class="fragment">html canvas</li>
+        </ul>
+      </section>
+
+      <section class="photo" data-image="m/spj.jpg"></section>
+
+      <section class="photo" data-image="m/purescript.png"></section>
+
+      <section class="photo" data-image="m/cosplayer.jpg"></section>
+
+      <section>
+        <p class="fragment">purescript is</p>
+        <ul>
+          <li class="fragment">haskelly syntax</li>
+          <li class="fragment">js datatypes</li>
+          <li class="fragment">actually pure</li>
+          <li class="fragment">effects & ffi</li>
+        </ul>
+      </section>
+
+      <section data-psrepl="text/x-purescript">
+        module My.Data.List where
+
+        data List a = Cons a (List a) | Nil
+
+        instance showList :: (Show a) => Show (List a) where
+          show (Cons x xs) = (show x) ++ " : " ++ show xs
+          show Nil = "Nil"
+      </section>
+
+      <section class="photo white align-bottom" data-image="m/kmett.jpg">
+        <p>category theory</p>
+      </section>
+
+      <section data-psrepl="text/x-purescript" data-import="Test.QuickCheck">
+        module My.Data.Geom where
+
+        import Test.QuickCheck
+        import Test.QuickCheck.LCG
+        import Test.QuickCheck.Properties
+
+        data Pair = Pair Number Number
+
+        addPairs :: Pair -> Pair -> Pair
+        addPairs (Pair x1 y1) (Pair x2 y2) = Pair (x1+x2) (y1+y2)
+
+        instance eqPair :: Eq Pair where
+          (==) (Pair x1 y1) (Pair x2 y2) = (x1 == x2) && (y1 == y2)
+          (/=) a b = not (a == b)
+
+        instance showPair :: Show Pair where
+          show (Pair x y) = "(" ++ round x ++ ", " ++ round y ++ ")"
+            where round a = show $ ((a * 10000) | 0) / 10000
+
+        instance arbPair :: Arbitrary Pair where
+          arbitrary = do
+            x <- uniform
+            y <- uniform
+            return $ Pair x y
+      </section>
+
+      <section data-editor="text/x-purescript" data-href="game/game.html" data-reload>
+        module Game where
+
+        import Control.Monad.Eff
+        import Signal
+        import Signal.Time
+        import Signal.DOM
+        import DOM
+
+        type GameObject =
+          { id :: String, css :: String
+          , x :: Number, y :: Number
+          , baseX :: Number, baseY :: Number
+          , vx :: Number, vy :: Number }
+
+        type Bounds = { x1 :: Number, x2 :: Number, y1 :: Number, y2 :: Number }
+        bounds :: forall a. GameObject -> Bounds
+        bounds a = { x1: a.x + a.baseX, y1: a.y + a.baseY
+                   , x2: a.x + a.baseX + 64, y2: a.y + a.baseY + 64 }
+        intersects :: forall a b. GameObject -> GameObject -> Boolean
+        intersects a b = not ((b'.x1 > a'.x2) || (b'.x2 < a'.x1) || (b'.y1 > a'.y2) || (b'.y2 < a'.y1))
+          where a' = bounds a
+                b' = bounds b
+
+        main :: Eff (dom :: DOM) Unit
+        main = return unit
+      </section>
+
+      <section data-editor="text/x-purescript" data-href="game/game.html" data-reload>
+        module Game where
+
+        import Control.Monad.Eff
+        import Signal
+        import Signal.Time
+        import Signal.DOM
+        import DOM
+
+        type GameObject =
+          { id :: String, css :: String
+          , x :: Number, y :: Number
+          , baseX :: Number, baseY :: Number
+          , vx :: Number, vy :: Number }
+
+        type Bounds = { x1 :: Number, x2 :: Number, y1 :: Number, y2 :: Number }
+        bounds :: forall a. GameObject -> Bounds
+        bounds a = { x1: a.x + a.baseX, y1: a.y + a.baseY
+                   , x2: a.x + a.baseX + 64, y2: a.y + a.baseY + 64 }
+        intersects :: forall a b. GameObject -> GameObject -> Boolean
+        intersects a b = not ((b'.x1 > a'.x2) || (b'.x2 < a'.x1) || (b'.y1 > a'.y2) || (b'.y2 < a'.y1))
+          where a' = bounds a
+                b' = bounds b
+
+        foreign import renderObject
+          "function renderObject(o) {\
+          \  return function() {\
+          \    var el = document.getElementById(o.id);\
+          \    el.setAttribute('class', o.css);\
+          \    el.setAttribute('style', 'left: '\
+          \      + (o.baseX + (o.x | 0))\
+          \      + 'px; top: '\
+          \      + (o.baseY + (o.y | 0)) + 'px');\
+          \    return {};\
+          \  }\
+          \}" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
+
+        frameRate :: Signal Number
+        frameRate = every 33
+
+        ground :: Signal GameObject
+        ground = frameRate ~> \n ->
+          { id: "ground", css: ""
+          , x: ((n / 33) % 64) * -8, y: 0
+          , baseX: -128, baseY: 384
+          , vx: 0, vy: 0 }
+
+        gravity :: GameObject -> GameObject
+        gravity o = o { vy = o.vy + 0.98 }
+
+        velocity :: GameObject -> GameObject
+        velocity o = o { x = o.x + o.vx
+                       , y = o.y + o.vy }
+
+        solidGround :: GameObject -> GameObject
+        solidGround o =
+          if o.y >= 0
+          then o { y = 0, vy = 0, css = "" }
+          else o
+
+        jump :: Boolean -> GameObject -> GameObject
+        jump true p@{ y = 0 } = p { vy = -20, css = "jumping" }
+        jump _ p = p
+
+        initialPinkie :: GameObject
+        initialPinkie =
+          { id: "pinkie", css: ""
+          , x: 0, y: 0
+          , baseX: 0, baseY: 276
+          , vx: 0, vy: 0 }
+
+        pinkieLogic :: Boolean -> GameObject -> GameObject
+        pinkieLogic spaceBar p = solidGround
+          $ gravity
+          $ velocity
+          $ jump spaceBar p
+
+        pinkie :: Signal Boolean -> Signal GameObject
+        pinkie keys = foldp pinkieLogic initialPinkie
+                        (sampleOn frameRate keys)
+
+        initialCoin :: GameObject
+        initialCoin =
+          { id: "coin", css: ""
+          , x: 1000, y: 40
+          , baseX: 0, baseY: 0
+          , vx: -8, vy: 0 }
+
+        reset :: GameObject -> GameObject -> GameObject
+        reset i o | o.x < -100 || o.y < -100 = i
+        reset _ o = o
+
+        coinLogic :: GameObject -> GameObject -> GameObject
+        coinLogic _ c | c.vy < 0 =
+          velocity $ reset initialCoin c { vy = c.vy * 2}
+        coinLogic pinkie c | intersects pinkie c =
+          c { vx = 0, vy = -1 }
+        coinLogic pinkie c =
+          velocity $ reset initialCoin c
+
+        coin :: Signal GameObject -> Signal GameObject
+        coin = foldp coinLogic initialCoin
+
+        main :: Eff (dom :: DOM) Unit
+        main = do
+          spaceBar <- keyPressed 32
+          let p = pinkie spaceBar
+          runSignal $ ground ~> renderObject
+          runSignal $ p ~> renderObject
+          runSignal $ coin p ~> renderObject
+      </section>
+
+      <section class="photo white" data-background="m/doge.gif">
+        <h3>OK THX BYE!</h3>
+        <p><a href="https://twitter.com/bodil">@bodil</a></p>
+      </section>
+
+    <script type="text/javascript" src="dist/pink/pink.js"></script>
+  </body>
+</html>

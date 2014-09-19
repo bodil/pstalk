@@ -1,0 +1,74 @@
+@titleColour: #ffa;
+@subtitleColour: #aaf;
+@authorColour: #dab;
+
+#slides.haskell section {
+    padding-left: 0;
+    padding-right: 0;
+
+    p, h1, h2, h3, h4, li {
+        font-family: "Comic Sans MS", "Comic Neue";
+        font-weight: bold;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    &.align-bottom {
+        padding-bottom: 1em;
+    }
+
+    &.title-slide {
+        background: none;
+
+        h1 {
+            font-size: 2em;
+            color: @titleColour;
+            text-shadow: 0 1px 0 darken(@titleColour, 50%),
+            0 2px 0 darken(@titleColour, 55%),
+            0 3px 0 darken(@titleColour, 60%),
+            0 4px 0 darken(@titleColour, 65%),
+            0 5px 0 darken(@titleColour, 70%),
+            0 6px 1px rgba(0,0,0,.1),
+            0 0 5px rgba(0,0,0,.1),
+            0 1px 3px rgba(0,0,0,.3),
+            0 3px 5px rgba(0,0,0,.2),
+            0 5px 10px rgba(0,0,0,.25),
+            0 20px 20px rgba(0,0,0,.15);
+        }
+
+        h2 {
+            font-size: 1em;
+            color: @subtitleColour;
+            text-shadow: 0 1px 0 darken(@subtitleColour, 35%),
+            0 2px 0 darken(@subtitleColour, 40%),
+            0 3px 0 darken(@subtitleColour, 45%),
+            0 4px 0 darken(@subtitleColour, 50%),
+            0 6px 1px rgba(0,0,0,.1),
+            0 0 5px rgba(0,0,0,.1),
+            0 1px 3px rgba(0,0,0,.3),
+            0 3px 5px rgba(0,0,0,.2),
+            0 4px 8px rgba(0,0,0,.25),
+            0 10px 10px rgba(0,0,0,.15);
+        }
+
+        h3 {
+            font-size: 1em;
+            a {
+                text-decoration: none;
+                color: @authorColour;
+                text-shadow: 0 1px 0 darken(@authorColour, 35%),
+                0 2px 0 darken(@authorColour, 40%),
+                0 3px 0 darken(@authorColour, 45%),
+                0 4px 0 darken(@authorColour, 50%),
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 4px 8px rgba(0,0,0,.25),
+                0 10px 10px rgba(0,0,0,.15);
+            }
+        }
+    }
+}
