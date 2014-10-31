@@ -22,7 +22,12 @@
     }
 
     if (message.hasOwnProperty("code")) {
+      document.body.style.visibility = "visible";
       evalCode(message.code);
+    }
+
+    if (message.hasOwnProperty("hide")) {
+      document.body.style.visibility = message.hide ? "hidden" : "visible";
     }
   }
 

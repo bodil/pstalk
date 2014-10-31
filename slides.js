@@ -8,6 +8,6 @@ new Pink("#slides", {
   "image": require("pink/modules/image"),
   "psrepl": require("./modules/psrepl")(),
   "editor": require("pink/modules/editor")([
-    require("pink/modules/editor/language/purescript")
+    require("./modules/editor/language/purescript")
   ])
 });

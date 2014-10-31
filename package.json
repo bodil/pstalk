@@ -9,12 +9,13 @@
     "start": "pink run slides.js & supervisor src/server.js"
   },
   "dependencies": {
-    "codemirror": "^4.5.0",
+    "codemirror": "^4.7.0",
+    "engine.io": "^1.4.2",
+    "engine.io-client": "^1.4.2",
     "glob": "^4.0.6",
     "jquery": "^2.1.1",
     "q": "^1.0.1",
     "supervisor": "^0.6.0",
-    "temp": "^0.8.1",
-    "websocket-driver": "^0.3.5"
+    "temp": "^0.8.1"
   }
 }

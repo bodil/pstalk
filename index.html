@@ -81,23 +81,12 @@
       <section data-psrepl="text/x-purescript" data-import="Test.QuickCheck">
         module My.Data.Geom where
 
-        import Test.QuickCheck
-        import Test.QuickCheck.LCG
-        import Test.QuickCheck.Properties
-
-        instance eqPair :: Eq Pair where
-          (==) (Pair x1 y1) (Pair x2 y2) = (x1 == x2) && (y1 == y2)
-          (/=) a b = not (a == b)
-
         instance showPair :: Show Pair where
           show (Pair x y) = "(" ++ round x ++ ", " ++ round y ++ ")"
             where round a = show $ ((a * 10000) | 0) / 10000
+      </section>
 
-        instance arbPair :: Arbitrary Pair where
-          arbitrary = do
-            x <- uniform
-            y <- uniform
-            return $ Pair x y
+      <section class="photo" data-image="m/quickcheck.jpg">
       </section>
 
       <section data-psrepl="text/x-purescript" data-import="Test.QuickCheck">
@@ -154,18 +143,18 @@
           where a' = bounds a
                 b' = bounds b
 
-        foreign import renderObject
-          "function renderObject(o) {\
-          \  return function() {\
-          \    var el = document.getElementById(o.id);\
-          \    el.setAttribute('class', o.css);\
-          \    el.setAttribute('style', 'left: '\
-          \      + (o.baseX + (o.x | 0))\
-          \      + 'px; top: '\
-          \      + (o.baseY + (o.y | 0)) + 'px');\
-          \    return {};\
-          \  }\
-          \}" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
+        foreign import renderObject """
+          function renderObject(o) {
+            return function() {
+              var el = document.getElementById(o.id);
+              el.setAttribute('class', o.css);
+              el.setAttribute('style', 'left: '
+                + (o.baseX + (o.x | 0))
+                + 'px; top: '
+                + (o.baseY + (o.y | 0)) + 'px');
+              return {};
+            }
+          }""" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
       </section>
 
       <section data-editor="text/x-purescript" data-href="game/game.html" data-reload>
@@ -192,18 +181,18 @@
           where a' = bounds a
                 b' = bounds b
 
-        foreign import renderObject
-          "function renderObject(o) {\
-          \  return function() {\
-          \    var el = document.getElementById(o.id);\
-          \    el.setAttribute('class', o.css);\
-          \    el.setAttribute('style', 'left: '\
-          \      + (o.baseX + (o.x | 0))\
-          \      + 'px; top: '\
-          \      + (o.baseY + (o.y | 0)) + 'px');\
-          \    return {};\
-          \  }\
-          \}" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
+        foreign import renderObject """
+          function renderObject(o) {
+            return function() {
+              var el = document.getElementById(o.id);
+              el.setAttribute('class', o.css);
+              el.setAttribute('style', 'left: '
+                + (o.baseX + (o.x | 0))
+                + 'px; top: '
+                + (o.baseY + (o.y | 0)) + 'px');
+              return {};
+            }
+          }""" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
 
         frameRate :: Signal Number
         frameRate = every 33
