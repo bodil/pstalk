@@ -8,7 +8,7 @@ map :: forall a b. (a -> b) -> List a -> List b
 map f Nil = Nil
 map f (Cons a d) = Cons (f a) (map f d)
 
-instance functorList :: (Functor a) => Functor List where
+instance functorList :: Functor List where
   (<$>) = map
 
 instance showList :: (Show a) => Show (List a) where

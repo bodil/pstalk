@@ -7,3 +7,5 @@
 npm-debug.log
 /repl-server/target
 /bower_components/
+/dist/
+/.psci_modules/

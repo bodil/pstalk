@@ -33,65 +33,7 @@
           <li class="fragment">it's a mess</li>
           <li class="fragment">it's a mess</li>
           <li class="fragment">it's a mess</li>
-          <li class="fragment">not enough homotopy type theory</li>
-        </ul>
-      </section>
-
-      <section class="photo" data-image="m/gnu.jpg"></section>
-
-      <section class="photo" data-image="m/norway.jpg"></section>
-
-      <section class="photo" data-image="m/shooped-norway.jpg"></section>
-
-      <section class="photo" data-image="m/real-norway.jpg"></section>
-
-      <section class="photo" data-image="m/bruce.jpg"></section>
-
-      <section class="photo white align-bottom" data-image="m/hello-joe.jpg">
-        <p>Hello Mike?</p>
-      </section>
-
-      <section class="photo" data-image="m/yes-this-is-dog.gif"></section>
-
-      <section class="photo" data-image="m/fal.jpg"></section>
-
-      <section>
-        <p>demo time</p>
-      </section>
-
-      <section>
-        <p>game engine:</p>
-        <ul>
-          <li class="fragment">functional</li>
-          <li class="fragment">reactive</li>
-          <li class="fragment">animation</li>
-        </ul>
-      </section>
-
-      <section class="photo white" data-image="m/mario.jpg">
-        <h2>ELM</h2>
-      </section>
-
-      <section class="photo" data-image="m/iveler.jpg"></section>
-
-      <section>
-        <p>constraints:</p>
-        <ul>
-          <li class="fragment">deliverable size</li>
-          <li class="fragment">unpredictable environment</li>
-        </ul>
-      </section>
-
-      <section class="photo white align-bottom" data-image="m/iveler.jpg">
-        <p>love me</p>
-      </section>
-
-      <section class="photo white" data-image="m/typescript.jpg">
-        <p class="fragment">the full stack:</p>
-        <ul>
-          <li class="fragment">typescript</li>
-          <li class="fragment">rxjs / baconjs</li>
-          <li class="fragment">html canvas</li>
+          <li class="fragment">needs more homotopy type theory</li>
         </ul>
       </section>
 
@@ -102,10 +44,10 @@
       <section class="photo" data-image="m/cosplayer.jpg"></section>
 
       <section>
-        <p class="fragment">purescript is</p>
+        <p>purescript is</p>
         <ul>
           <li class="fragment">haskelly syntax</li>
-          <li class="fragment">js datatypes</li>
+          <li class="fragment">close to the js</li>
           <li class="fragment">actually pure</li>
           <li class="fragment">effects & ffi</li>
         </ul>
@@ -114,15 +56,48 @@
       <section data-psrepl="text/x-purescript">
         module My.Data.List where
 
-        data List a = Cons a (List a) | Nil
-
-        instance showList :: (Show a) => Show (List a) where
-          show (Cons x xs) = (show x) ++ " : " ++ show xs
-          show Nil = "Nil"
+        -- instance showList :: (Show a) => Show (List a) where
+        --   show (Cons x xs) = (show x) ++ " : " ++ show xs
+        --   show Nil = "Nil"
       </section>
 
       <section class="photo white align-bottom" data-image="m/kmett.jpg">
         <p>category theory</p>
+      </section>
+
+      <section class="photo" data-image="m/burrito.jpg"></section>
+
+      <section class="photo white align-bottom" data-image="m/kmett.jpg">
+        <h4>semigroup:</h4>
+        <p>(a + b) + c = a + (b + c)</p>
+      </section>
+
+      <section class="photo white align-bottom" data-image="m/kmett.jpg">
+        <h4>monoid:</h4>
+        <p>semigroup but also</p>
+        <p>a + empty = a</p>
+      </section>
+
+      <section data-psrepl="text/x-purescript" data-import="Test.QuickCheck">
+        module My.Data.Geom where
+
+        import Test.QuickCheck
+        import Test.QuickCheck.LCG
+        import Test.QuickCheck.Properties
+
+        instance eqPair :: Eq Pair where
+          (==) (Pair x1 y1) (Pair x2 y2) = (x1 == x2) && (y1 == y2)
+          (/=) a b = not (a == b)
+
+        instance showPair :: Show Pair where
+          show (Pair x y) = "(" ++ round x ++ ", " ++ round y ++ ")"
+            where round a = show $ ((a * 10000) | 0) / 10000
+
+        instance arbPair :: Arbitrary Pair where
+          arbitrary = do
+            x <- uniform
+            y <- uniform
+            return $ Pair x y
       </section>
 
       <section data-psrepl="text/x-purescript" data-import="Test.QuickCheck">
@@ -136,6 +111,9 @@
 
         addPairs :: Pair -> Pair -> Pair
         addPairs (Pair x1 y1) (Pair x2 y2) = Pair (x1+x2) (y1+y2)
+
+        instance semigroupPair :: Semigroup Pair where
+          (<>) = addPairs
 
         instance eqPair :: Eq Pair where
           (==) (Pair x1 y1) (Pair x2 y2) = (x1 == x2) && (y1 == y2)
@@ -176,8 +154,18 @@
           where a' = bounds a
                 b' = bounds b
 
-        main :: Eff (dom :: DOM) Unit
-        main = return unit
+        foreign import renderObject
+          "function renderObject(o) {\
+          \  return function() {\
+          \    var el = document.getElementById(o.id);\
+          \    el.setAttribute('class', o.css);\
+          \    el.setAttribute('style', 'left: '\
+          \      + (o.baseX + (o.x | 0))\
+          \      + 'px; top: '\
+          \      + (o.baseY + (o.y | 0)) + 'px');\
+          \    return {};\
+          \  }\
+          \}" :: forall e. GameObject -> Eff (dom :: DOM | e) Unit
       </section>
 
       <section data-editor="text/x-purescript" data-href="game/game.html" data-reload>

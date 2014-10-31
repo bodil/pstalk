@@ -66,16 +66,6 @@ foreign import merge
   \  };\
   \}" :: forall a. Signal a -> Signal a -> Signal a
 
--- foreign import zip
---   "function zip(a) {\
---   \  return function(b) {\
---   \    var out = constant(new Tuple(a.get(), b.get()));\
---   \    a.subscribe(function(v) { return new Tuple(v, b.get()); });\
---   \    b.subscribe(function(v) { return new Tuple(a.get(), v); });\
---   \    return out;\
---   \  };\
---   \}" :: forall a b. Signal a -> Signal b -> Signal (Tuple a b)
-
 foreign import foldp
   "function foldp(fun) {\
   \  return function(seed) {\
@@ -108,7 +98,7 @@ foreign import distinct
   \  var val = sig.get();\
   \  var out = constant(val);\
   \  sig.subscribe(function(val) {\
-  \    console.log(val);\
+  \    console.log('lol');\
   \  });\
   \}" :: forall a. (Eq a) => Signal a -> Signal a
 
