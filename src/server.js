@@ -35,7 +35,9 @@ server.on("connection", function(socket) {
           respond("unknown message");
         }
       });
-      socket.send(JSON.stringify({ready: true}));
+      repl.sendCommand("unit", function(err, res) {
+        if (!err) socket.send(JSON.stringify({ready: true}));
+      });
     }
   });
 });
