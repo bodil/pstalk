@@ -117,6 +117,13 @@
             x <- uniform
             y <- uniform
             return $ Pair x y
+
+        verifySemigroup :: forall a. (Semigroup a, Eq a, Show a) => a -> a -> a -> Result
+        verifySemigroup a b c =
+          (a <> b) <> c == a <> (b <> c) <?>
+             "Property: a(bc) == (ab)c" ++
+             "\n(ab)c = " ++ show ((a <> b) <> c) ++
+             "\na(bc) = " ++ show (a <> (b <> c)) ++ "\n"
       </section>
 
       <section data-editor="text/x-purescript" data-href="game/game.html" data-reload>
