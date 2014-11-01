@@ -2,19 +2,16 @@
   "name": "pstalk",
   "version": "1.0.0",
   "license": "GPL-3.0+",
-  "devDependencies": {
-    "pink": "0.0.1"
-  },
   "scripts": {
     "start": "pink run slides.js & supervisor src/server.js"
   },
   "dependencies": {
-    "codemirror": "^4.7.0",
-    "engine.io": "^1.4.2",
-    "engine.io-client": "^1.4.2",
-    "glob": "^4.0.6",
-    "q": "^1.0.1",
-    "supervisor": "^0.6.0",
-    "temp": "^0.8.1"
+    "codemirror": "4.7.0",
+    "engine.io": "1.4.2",
+    "engine.io-client": "1.4.2",
+    "glob": "4.0.6",
+    "pink": "git://github.com/bodil/pink#972a16f",
+    "supervisor": "0.6.0",
+    "temp": "0.8.1"
   }
 }
