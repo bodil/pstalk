@@ -2,11 +2,12 @@
   "name": "pstalk",
   "private": true,
   "dependencies": {
-    "purescript-control": "*",
-    "purescript-math": "*",
-    "purescript-maybe": "*",
-    "purescript-tuples": "*",
-    "purescript-monoid": "*",
-    "purescript-quickcheck": "*"
+    "purescript-quickcheck": "0.2.2",
+    "purescript-monoid": "0.1.4",
+    "purescript-signal": "1.0.2",
+    "purescript-dom": "0.1.1"
+  },
+  "resolutions": {
+    "purescript-strings": "0.4.0"
   }
 }
