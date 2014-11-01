@@ -1,0 +1,19 @@
+* A PureScript Talk
+
+This is the slide deck for a talk I did once about PureScript. It has ponies.
+
+** Getting Started
+
+#+BEGIN_SRC shell
+$ cabal install purescript
+$ npm install
+$ npm start
+#+END_SRC
+
+Then browse to http://localhost:1337/.
+
+** Keys
+
+In REPL: ~C-o~ to switch focus, ~C-s~ to evaluate editor buffer.
+
+In IDE: ~C-s~ to load editor buffer in frame.
