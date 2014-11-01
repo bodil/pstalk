@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "GPL-3.0+",
   "scripts": {
+    "install": "bower install",
     "start": "pink run slides.js & supervisor src/server.js"
   },
   "dependencies": {
@@ -11,7 +12,10 @@
     "engine.io-client": "1.4.2",
     "glob": "4.0.6",
     "pink": "git://github.com/bodil/pink#972a16f",
-    "supervisor": "0.6.0",
     "temp": "0.8.1"
+  },
+  "devDependencies": {
+    "bower": "1.3.12",
+    "supervisor": "0.6.0"
   }
 }
