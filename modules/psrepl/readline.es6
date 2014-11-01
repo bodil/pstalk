@@ -50,7 +50,16 @@ function ReadLine(opts) {
   this.term.on("key", (key, e) => {
     const char = key.charCodeAt(0);
     console.log("termKey", e);
-    if (e.keyCode === 79 && e.ctrlKey) {
+    if (e.charCode >= 32) {
+      this.line = this.line.slice(0, this.caret) + key
+        + this.line.slice(this.caret);
+      this.term.write(this.line.slice(this.caret));
+      this.caret++;
+      const back = (this.line.length - this.caret);
+      if (back > 0) {
+        this.term.write(left(back));
+      }
+    } else if (e.keyCode === 79 && e.ctrlKey) {
       this.emit("focusOut", null);
       e.stopPropagation();
       e.preventDefault();
@@ -75,27 +84,35 @@ function ReadLine(opts) {
           this.line.slice(this.caret);
         this.caret--;
       }
-    } else if (e.keyCode === 37) { // left arrow
+    } else if (e.keyCode == 46) { // delete
+      const dist = this.line.length - this.caret;
+      if (dist) {
+        this.term.write(this.line.slice(this.caret + 1) +
+                        " " + left(dist));
+        this.line = this.line.slice(0, this.caret) +
+          this.line.slice(this.caret + 1);
+      }
+    } else if (e.keyCode === 37 && !e.shiftKey) { // left arrow
       const caret = Math.max(0, this.caret - 1);
       if (caret !== this.caret) this.term.write(left(1));
       this.caret = caret;
-    } else if (e.keyCode === 39) { // right arrow
+    } else if (e.keyCode === 39 && !e.shiftKey) { // right arrow
       const caret = Math.min(this.line.length, this.caret + 1);
       if (caret !== this.caret) this.term.write(right(1));
       this.caret = caret;
     } else if (e.keyCode === 67 && e.ctrlKey) { // C-c
       clear();
-    } else if ((e.keyCode === 65 && e.ctrlKey) || e.keyCode === 36) { // C-a / home
+    } else if ((e.keyCode === 65 && e.ctrlKey) || (e.keyCode === 36 && !e.shiftKey)) { // C-a / home
       this.term.write(left(this.caret));
       this.caret = 0;
-    } else if ((e.keyCode === 69 && e.ctrlKey) || e.keyCode === 35) { // C-e / end
+    } else if ((e.keyCode === 69 && e.ctrlKey) || (e.keyCode === 35 && !e.shiftKey)) { // C-e / end
       this.term.write(right(this.line.length - this.caret));
       this.caret = this.line.length;
     } else if (e.keyCode === 75 && e.ctrlKey) { // C-k
       const dist = this.line.length - this.caret;
       this.term.write(" ".repeat(dist) + left(dist));
       this.line = this.line.slice(0, this.caret);
-    } else if (e.keyCode === 38) { // up arrow
+    } else if (e.keyCode === 38 && !e.shiftKey) { // up arrow
       if (this.histPos === -1) {
         this.history.unshift(this.line);
         this.histPos = 0;
@@ -104,22 +121,13 @@ function ReadLine(opts) {
         this.histPos++;
         replace(this.history[this.histPos]);
       }
-    } else if (e.keyCode === 40) { // down arrow
+    } else if (e.keyCode === 40 && !e.shiftKey) { // down arrow
       if (this.histPos === 1) {
         replace(this.history.shift());
         this.histPos = -1;
       } else if (this.histPos > 1) {
         this.histPos--;
         replace(this.history[this.histPos]);
-      }
-    } else if (char >= 32 && char < 127) {
-      this.line = this.line.slice(0, this.caret) + key
-        + this.line.slice(this.caret);
-      this.term.write(this.line.slice(this.caret));
-      this.caret++;
-      const back = (this.line.length - this.caret);
-      if (back > 0) {
-        this.term.write(left(back));
       }
     }
   });
