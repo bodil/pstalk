@@ -67,7 +67,8 @@ function factory() {
             marker.title = msg;
             marker.classList.add("cm-error");
             cm.setGutterMarker(line, "cm-errors", marker);
-            msg.forEach((l) => console.report(l));
+            msg.forEach((l) => this.console.write(l));
+            this.focusEditor();
             cm.getDoc().setCursor(line, col);
           } else {
             this.console.write(res.error);
