@@ -56,9 +56,9 @@
       <section data-psrepl="text/x-purescript">
         module My.Data.List where
 
-        -- instance showList :: (Show a) => Show (List a) where
-        --   show (Cons x xs) = (show x) ++ " : " ++ show xs
-        --   show Nil = "Nil"
+        instance showList :: (Show a) => Show (List a) where
+          show (Cons x xs) = (show x) ++ " : " ++ show xs
+          show Nil = "Nil"
       </section>
 
       <section class="photo white align-bottom" data-image="m/kmett.jpg">

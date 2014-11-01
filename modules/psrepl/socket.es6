@@ -1,8 +1,9 @@
 var engineIoClient = require("engine.io-client");
 var text = require("pink/lib/text");
-require("codemirror").defineMIME("text/x-purescript", "haskell");
+var events = require("events");
+var util = require("util");
 
-module.exports = function PureScript() {
+function Socket(opts) {
 
   var socket = new engineIoClient("ws://localhost:31336");
   var queue = {};
@@ -11,10 +12,12 @@ module.exports = function PureScript() {
   socket.on("message", (data) => {
     let msg = JSON.parse(data);
     let id = msg.messageId;
-    let callback = queue[id];
-    if (callback) {
-      delete queue[id];
-      callback(msg);
+    if (id) {
+      let callback = queue[id];
+      if (callback) {
+        delete queue[id];
+        callback(msg);
+      }
     }
   });
 
@@ -35,8 +38,8 @@ module.exports = function PureScript() {
   this.evalCode = function evalCode(form, callback) {
     send({eval: form, type: "text/x-purescript"}, callback);
   }
-
-  this.comment = function comment(code) {
-    return "-- " + code;
-  }
 };
+
+util.inherits(Socket, events.EventEmitter);
+
+module.exports = Socket;

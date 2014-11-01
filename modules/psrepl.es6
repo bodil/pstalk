@@ -16,14 +16,18 @@ require("codemirror/mode/haskell/haskell.js");
 
 require("./psrepl/theme.less");
 
-// bleh jquery for console
-var $ = window.jQuery = require("jquery");
-require("./psrepl/jquery.console");
+CodeMirror.defineMIME("text/x-purescript", "haskell");
+
+var ReadLine = require("./psrepl/readline.es6");
 
 var events = require("pink/lib/events");
 var text = require("pink/lib/text");
 var emacs = require("pink/modules/editor/emacs");
 var seq = require("pink/lib/seq");
+
+var termColours = require("./psrepl/term").colors;
+termColours[256] = "white";
+termColours[257] = "black";
 
 function factory() {
 
@@ -41,19 +45,19 @@ function factory() {
 
     // --- Comms
 
-    this.evalCommand = ((line, report) => {
-      this.language.evalCode(line, (msg) => {
+    this.evalCommand = ((line) => {
+      this.socket.evalCode(line, (msg) => {
         let out = msg.result.value;
         if (out.slice(-1) === "\n") out = out.slice(0, -1);
-        report(out);
+        this.console.write(out);
       });
     }).bind(this);
 
     this.loadBuffer = (() => {
       let console = this.console, cm = this.cm;
-      console.report("Compiling...");
+      this.console.write("Compiling...");
       cm.clearGutter("cm-errors");
-      this.language.compile(this.cm.getDoc().getValue(), imports, (res) => {
+      this.socket.compile(this.cm.getDoc().getValue(), imports, (res) => {
         if (res.error) {
           let m = res.error.match(/Error at \S+ line (\d+), column (\d+):/m);
           if (m) {
@@ -66,28 +70,37 @@ function factory() {
             msg.forEach((l) => console.report(l));
             cm.getDoc().setCursor(line, col);
           } else {
-            console.report(res.error);
+            this.console.write(res.error);
           }
         } else {
-          console.report("Module " + res.module + " compiled OK.");
+          this.console.write("Module " + res.module + " compiled OK.");
         }
       });
     }).bind(this);
 
     this.focusConsole = () => {
+      this.unfocus();
       this.console.focus();
-      this.console.scrollToBottom();
     };
 
     this.focusEditor = () => {
+      this.unfocus();
       this.cm.focus();
+    };
+
+    this.unfocus = () => {
+      this.console.blur();
+      // wow, much hack
+      const input = document.createElement("input");
+      input.setAttribute("type", "text");
+      document.body.appendChild(input);
+      input.focus();
+      input.parentNode.removeChild(input);
     };
 
     // --- keybindings
 
     const keymap = {};
-    keymap["Ctrl-O"] = this.focusConsole.bind(this);
-    // keymap["Ctrl-S"] = this.loadBuffer.bind(this);
     keymap["Ctrl-K"] = emacs.kill;
     keymap["Ctrl-Y"] = emacs.yank;
     keymap["Ctrl-A"] = "goLineStartSmart";
@@ -102,13 +115,10 @@ function factory() {
                                   {line: cur.line, ch: token.end});
     }
     keymap.Esc = (cm) => {
-      // wow, much hack
-      const input = document.createElement("input");
-      input.setAttribute("type", "text");
-      document.body.appendChild(input);
-      input.focus();
-      input.parentNode.removeChild(input);
+      this.unfocus();
     };
+
+    // --- Terminal
 
     // --- CodeMirror config
 
@@ -138,27 +148,14 @@ function factory() {
       this.replFrame = document.createElement("div");
       this.replFrame.classList.add("replFrame");
       target.appendChild(this.replFrame);
+      this.termContainer = document.createElement("div");
+      this.termContainer.classList.add("termContainer");
+      this.replFrame.appendChild(this.termContainer);
 
-      this.console = $("<div class='console'>").appendTo(this.replFrame).console({
-        promptLabel: "λ ",
-        promptHistory: true,
-        historyPreserveColumn: true,
-        commandHandle: this.evalCommand,
-        animateScroll: true
+      this.socket = new (require("./psrepl/socket"))({
+        cols: 80,
+        rows: 6
       });
-      this.console.typer.keydown(((e) => {
-        if (e.keyCode === 79 && e.ctrlKey) {
-          this.focusEditor();
-          e.stopPropagation();
-          e.preventDefault();
-        } else if (e.keyCode === 83 && e.ctrlKey) {
-          this.loadBuffer();
-          e.stopPropagation();
-          e.preventDefault();
-        }
-      }).bind(this));
-
-      this.language = new (require("./psrepl/language/purescript"))();
 
       this.cm = CodeMirror(this.editorFrame, options);
       this.cm.setSize("100%", "100%");
@@ -168,6 +165,21 @@ function factory() {
 
     this.stabilise = () => {
       this.cm.refresh();
+
+      let width = Math.round(this.replFrame.clientWidth / this.cm.defaultCharWidth());
+      this.console = new ReadLine({
+        cols: width,
+        rows: 6,
+        useStyle: true,
+        cursorBlink: true,
+        prompt: "λ ",
+        parent: this.termContainer,
+        colors: termColours
+      });
+      this.console.on("command", this.evalCommand);
+      this.console.on("loadBuffer", this.loadBuffer);
+      this.console.on("focusOut", this.focusEditor);
+
       this.cleanupHandler = events.on(window, "beforeunload", this.onTabClose, this);
       this.focusKeyHandler = events.on(window, "keydown", (e) => {
         if (e.keyCode === 79 && e.ctrlKey) {
@@ -193,9 +205,11 @@ function factory() {
         events.off(window, "keydown", this.focusKeyHandler);
         this.focusKeyHandler = null;
       }
+      this.console.cleanup();
+      this.console = null;
       this.cm = null;
-      this.language.cleanup();
-      this.language = null;
+      this.socket.cleanup();
+      this.socket = null;
       target.innerHTML = initialCode;
       target.classList.remove("psrepl");
     }

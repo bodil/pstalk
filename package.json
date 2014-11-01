@@ -13,7 +13,6 @@
     "engine.io": "^1.4.2",
     "engine.io-client": "^1.4.2",
     "glob": "^4.0.6",
-    "jquery": "^2.1.1",
     "q": "^1.0.1",
     "supervisor": "^0.6.0",
     "temp": "^0.8.1"
