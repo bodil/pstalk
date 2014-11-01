@@ -13,8 +13,8 @@ function getModName(code) {
 }
 
 function createRepl(cb) {
-  var p = path.resolve(__dirname, "../{bower_components,purs}");
-  glob(p + "/**/*.purs", {}, function(err, deps) {
+  var p = path.resolve(__dirname, "../bower_components");
+  glob(p + "/*/src/**/*.purs", {}, function(err, deps) {
     if (err) return cb(err);
     temp.mkdir("psrepl", function(err, codepath) {
       if (err) return cb(err);
