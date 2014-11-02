@@ -49,7 +49,6 @@ function ReadLine(opts) {
 
   this.term.on("key", (key, e) => {
     const char = key.charCodeAt(0);
-    console.log("termKey", e);
     if (e.charCode >= 32) {
       this.line = this.line.slice(0, this.caret) + key
         + this.line.slice(this.caret);

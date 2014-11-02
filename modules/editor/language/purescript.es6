@@ -1,10 +1,10 @@
-var engineIoClient = require("engine.io-client");
+var socketIoClient = require("socket.io-client");
 var text = require("pink/lib/text");
 module.exports = (CodeMirror, languages) => {
   CodeMirror.defineMIME("text/x-purescript", "haskell");
 
   function PureScript() {
-    var socket = new engineIoClient("ws://localhost:31336");
+    var socket = new socketIoClient("ws://localhost:31336");
     var queue = {};
     var counter = 0;
 

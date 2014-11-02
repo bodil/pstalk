@@ -1,7 +1,7 @@
 var repl = require("./repl");
 var compile = require("./compile");
 
-var server = require("engine.io").listen(31336);
+var server = require("socket.io")(31336);
 
 server.on("connection", function(socket) {
   console.log("** CONNECT");
