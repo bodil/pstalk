@@ -10,10 +10,13 @@ function getModName(code) {
 }
 
 module.exports = function(code, cb) {
-  var p = path.resolve(__dirname, "../{bower_components,purs}");
+  var p = path.resolve(__dirname, "../bower_components");
   var modName = getModName(code);
-  glob(p + "/**/*.purs", {}, function(err, deps) {
+  glob(p + "/*/src/**/*.purs", {}, function(err, deps) {
     if (err) return cb(err);
+    deps = deps.filter(function(i) {
+      return /purescript-(dom|signal|timers|easy-ffi)/.exec(i);
+    });
     temp.mkdir("psc", function(err, codepath) {
       if (err) return cb(err);
       var fileName = path.join(codepath, "out.purs");
